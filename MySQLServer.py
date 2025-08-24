@@ -1,26 +1,37 @@
+#!/usr/bin/python3
+"""
+MySQLServer.py
+Creates the database 'alx_book_store' if it does not already exist.
+"""
+
 import mysql.connector
 from mysql.connector import Error
 
-try:
-    # Connect to MySQL server
-    connection = mysql.connector.connect(
-        host='localhost',       # change if needed
-        user='your_username',   # your MySQL username
-        password='your_password' # your MySQL password
-    )
+def create_database():
+    try:
+        # Connect to MySQL server (update with your credentials)
+        connection = mysql.connector.connect(
+            host="localhost",
+            user="root",       # change if needed
+            password="password"  # change if needed
+        )
 
-    cursor = connection.cursor()
+        if connection.is_connected():
+            cursor = connection.cursor()
+            cursor.execute("CREATE DATABASE IF NOT EXISTS alx_book_store")
+            print("Database 'alx_book_store' created successfully!")
 
-    # Create database if it does not exist
-    cursor.execute("CREATE DATABASE IF NOT EXISTS alx_book_store")
-    print("Database 'alx_book_store' created successfully!")
+    except Error as e:
+        print(f"Error: Could not connect to the database. {e}")
 
-except Error as e:
-    print(f"Error while connecting or creating database: {e}")
+    finally:
+        # Close resources properly
+        try:
+            if connection.is_connected():
+                cursor.close()
+                connection.close()
+        except:
+            pass
 
-finally:
-    # Close cursor and connection safely
-    if 'cursor' in locals() and cursor is not None:
-        cursor.close()
-    if 'connection' in locals() and connection.is_connected():
-        connection.close()
+if __name__ == "__main__":
+    create_database()
